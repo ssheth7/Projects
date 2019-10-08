@@ -80,33 +80,46 @@ void drawMan(int level){
       gamestatus = -1;
   }
 }
-  void drawWord(char a){
-    if(a = '?')
-      for(int i = 0; i < hidden.length();i++){
-	cout <<"_ ";
-      }
 
 	  
-  }
 
-int indexChar(char a, pos p){
-  return hidden.find(a, p);
+bool indexChar(char a){
+  bool correct;
+  for (int i = 0; i < hidden.length();i++){
+    if(hidden.at(i) == a){
+      cout <<a <<" ";
+      correct = true;
+    }
+    else
+      {
+	cout <<"_ ";
+	if(correct != true)
+	  correct = false;
+      }
+  }
+  cout << "\n";
+  
 }
 
 char queryLetter(){
   cout << "Enter a letter";
   char let;
+  cout << " ";
   cin >> let;
+  cout << "\n";
   return let;
 }
 
 
 int main(){
   cout << "Welcome to hangman" << endl;
-  while(gamestatus != -1){
-    drawMan(stage);
-    drawWord('?');
-   
+  drawMan(stage);
+  indexChar('?');
+  while(stage != 6){
+    if (stage>0)
+      drawMan(stage);
+    if (indexChar(queryLetter())== false)
+      stage++;   
   }
   
 }
