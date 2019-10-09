@@ -81,12 +81,11 @@ void drawMan(int level){
     cout << "|_____|" << '\n';
   }
 }
-//does not compate g to chars in hidden
+//returns guessed index=> print from guessed array
 int findc(char in){
-  for(int i = 0; i < 26 ;i++){
+  for(int i = 0; i < 26;i++)
     if(guessed[i]==in)
       return i;
-  }
   return -1;
 }
 	  
@@ -132,6 +131,20 @@ int main(){
       drawMan(stage);
     }
     else drawMan(stage);
+    if(stage == 6){
+      while(true){
+	cout << "would you like to play again, enter yes or no: ";
+	string again;
+      cin >> again;
+      if (again == "yes"){
+	inList++;
+	stage = 0;
+        }
+      else if (again == "no")
+	cout << "Thanks for playing!";
+      break;
+      }
+    }
   }
   
 }
