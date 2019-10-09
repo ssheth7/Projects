@@ -1,9 +1,11 @@
+#include <string>
 #include <iostream>
 using namespace std;
   string wordsList[] = {"hello", "panorama", "Maximum", "Shivam", "favorite"};
-int gamestatus = 0;
+char guessed[26];
 int stage = 0;
 int inList = 0;
+int inG= 0;
 string hidden = wordsList[inList];
 
 
@@ -77,24 +79,23 @@ void drawMan(int level){
     cout << "  |    " << '\n';
     cout << " _|___ " << '\n';
     cout << "|_____|" << '\n';
-      gamestatus = -1;
   }
 }
 
 	  
 
 bool indexChar(char a){
-  bool correct;
+  bool correct= false;
+  guessed[inG];
+  inG++;
   for (int i = 0; i < hidden.length();i++){
-    if(hidden.at(i) == a){
-      cout <<a <<" ";
+    if (guessed.find(hidden.at(i), 0)!= -1){
+      cout <<guessed[guessed.find(hidden.at(i), 0)] <<" ";
       correct = true;
-    }
+	}
     else
       {
 	cout <<"_ ";
-	if(correct != true)
-	  correct = false;
       }
   }
   cout << "\n";
