@@ -81,16 +81,23 @@ void drawMan(int level){
     cout << "|_____|" << '\n';
   }
 }
-
+//does not compate g to chars in hidden
+int findc(char in){
+  for(int i = 0; i < 26 ;i++){
+    if(guessed[i]==in)
+      return i;
+  }
+  return -1;
+}
 	  
 
 bool indexChar(char a){
   bool correct= false;
-  guessed[inG];
+  guessed[inG]= a;
   inG++;
   for (int i = 0; i < hidden.length();i++){
-    if (guessed.find(hidden.at(i), 0)!= -1){
-      cout <<guessed[guessed.find(hidden.at(i), 0)] <<" ";
+    if (findc(hidden.at(i))!= -1){
+      cout <<guessed[findc(hidden.at(i))] <<" ";
       correct = true;
 	}
     else
@@ -99,8 +106,10 @@ bool indexChar(char a){
       }
   }
   cout << "\n";
-  
+  return correct;
 }
+
+
 
 char queryLetter(){
   cout << "Enter a letter";
@@ -117,10 +126,12 @@ int main(){
   drawMan(stage);
   indexChar('?');
   while(stage != 6){
-    if (stage>0)
+    bool inhidden =indexChar(queryLetter()); 
+    if (inhidden == false){
+      stage++;
       drawMan(stage);
-    if (indexChar(queryLetter())== false)
-      stage++;   
+    }
+    else drawMan(stage);
   }
   
 }
