@@ -1,19 +1,18 @@
-
-
+//To do-accept user words, check if a letter was already guessed
 #include <iostream>
 using namespace std;
 
-string wordsList[] = {"hello", "panorama", "Maximum", "Shivam", "favorite"};//list of words for the player to choose from
+
+string wordsList[] = {"hello", "panorama", "maximum", "shivam", "favorite"};//list of words the player guesses
 char guessed[26];//array that stores all the characters that the player guessed
 int stage = 0;//counts how many times the player enters a wrong character
 int inList = 0;//where the player is in wordsList
 int inG= 0;//where the player is in guessed
 string hidden = wordsList[inList];//the word that the player has to guess
-
+int numblanks; //numbers of unknown letters left
 //draws the hangman depending on variable stage
-//change level to stage?
-void drawMan(int level){
-  if (level == 0){
+void drawMan(){
+  if (stage==0){
     cout << "   ___ " <<'\n';
     cout << "  |   |" <<'\n';
     cout << "  |    " << '\n';
@@ -23,7 +22,7 @@ void drawMan(int level){
     cout << " _|___ " << '\n';
     cout << "|_____|" << '\n';
   }
-  else if (level == 1){
+  else if (stage == 1){
     cout << "   ___ " <<'\n';
     cout << "  |   |" << '\n';
     cout << "  |   o" << '\n';
@@ -33,7 +32,7 @@ void drawMan(int level){
     cout << " _|___ " << '\n';
     cout << "|_____|" << '\n';
       }
-  if (level == 2){
+  if (stage == 2){
     cout << "   ___ " <<'\n';
     cout << "  |   |" << '\n';
     cout << "  |   o" << '\n';
@@ -43,7 +42,7 @@ void drawMan(int level){
     cout << " _|___ " << '\n';
     cout << "|_____|" << '\n';
   }
-  if (level == 3){
+  if (stage == 3){
     cout << "   ___ " <<'\n';
     cout << "  |   |" << '\n';
     cout << "  |   o" << '\n';
@@ -53,7 +52,7 @@ void drawMan(int level){
     cout << " _|___ " << '\n';
     cout << "|_____|" << '\n';
   }
-  if (level == 4){
+  if (stage == 4){
     cout << "   ___ " <<'\n';
     cout << "  |   |" << '\n';
     cout << "  |   o" << '\n';
@@ -63,7 +62,7 @@ void drawMan(int level){
     cout << " _|___ " << '\n';
     cout << "|_____|" << '\n';
   }
-  if (level == 5){
+  if (stage == 5){
     cout << "   ___ " <<'\n';
     cout << "  |   |" << '\n';
     cout << "  |   o" << '\n';
@@ -73,7 +72,7 @@ void drawMan(int level){
     cout << " _|___ " << '\n';
     cout << "|_____|" << '\n';
   }
-  if (level == 6){
+  if (stage == 6){
     cout << "   ___ " <<'\n';
     cout << "  |   |" << '\n';
     cout << "  |   o" << '\n';
@@ -86,8 +85,7 @@ void drawMan(int level){
 }
 
 //if there is a character in guessed that equals a given char 
-int findc(char in){
-  
+int findc(char in){  
     for(int i = 0; i < 26;i++)
     if(guessed[i]==in)
       return i;
@@ -96,19 +94,20 @@ int findc(char in){
 	  
 //returns false if the latest guess from the player is not in word hidden
 bool indexChar(char a){
+  numblanks=0;
   bool correct= false;
-  guessed[inG]= a;
+  guessed[inG]= a;//puts player input into guessed array
   inG++;
-  for (int i = 0; i < hidden.length();i++){
+  for (int i = 0; i < hidden.length();i++){//prints spaces/letters depending if chars in guessed array= chars in hidden
     if (findc(hidden.at(i))!= -1){
       cout <<guessed[findc(hidden.at(i))] <<" ";
-      if(guessed[inG-1]==hidden.at(i))
+      if(guessed[inG-1]==hidden.at(i))//if the latest input is in hidden, function returns true
 	correct= true;
-
     }
     else
       {
 	cout <<"_ ";
+	numblanks++;
       }
   }
   cout << "\n";
@@ -116,13 +115,30 @@ bool indexChar(char a){
 }
 
 
+//prints letters guessed by the player
+void printGuessed(){
+  cout << "Guessed letters: ";
+  for (int i = 0; i < 26;i++)
+    if(guessed[i] != '!')
+    cout << guessed[i]<< ' ';
+  cout << '\n';
+}
+
+
 //gets a char from the player
 char queryLetter(){
-  cout << "Enter a letter";
+  printGuessed();
   char let;
-  cout << " ";
-  cin >> let;
+  while(true){
+  cout << "Enter a letter or multiple letters for multiple guesses: ";
+  cin >>let;
+  //for(int i = 0; i < 26;i++)
+    if(isalpha(let))
+      break;   
+     cout<< "invalid input: not a char or letter is already guessed"<< '\n';
+  }
   cout << "\n";
+  let=tolower(let);
   return let;
 }
 
@@ -130,24 +146,23 @@ char queryLetter(){
 //game is in a while loop that stop once the player gets 6 guesses wrong or gets the word correct
 int main(){
   cout << "Welcome to hangman" << endl;
-  drawMan(stage);
+  drawMan();
   indexChar('?');
 
-
+  fill(guessed, guessed+26, '!');
   
-  int ncorrect = 0;
   while(stage != 6){
     bool inhidden =indexChar(queryLetter()); 
     if (inhidden == false){
       stage++;
-      drawMan(stage);
+      drawMan();
     }
     else{
-      drawMan(stage);
-      ncorrect++;
+      drawMan();
+      
     }
-    if(ncorrect == hidden.length()){
-      cout << "You got the word correct!";
+    if(numblanks == 0){
+      cout << "You got the word correct!"<< '\n';
       stage =6;
     }
     
@@ -159,12 +174,12 @@ int main(){
       if (again == "yes"){
 	inList++;
 	hidden=wordsList[inList];
-	ncorrect = 0;
 	inG = 0;
-	fill(guessed, guessed+16, '!');
+	fill(guessed, guessed+26, '!');
 	stage = 0;
-	drawMan(stage);
+	drawMan();
 	indexChar('?');
+	fill(guessed, guessed+26, '!');
 	break;
         }
       else if (again == "no"){
