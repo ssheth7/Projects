@@ -1,15 +1,15 @@
-//To do-accept user words, check if a letter was already guessed
 #include <iostream>
+#include <algorithm>
 using namespace std;
 
-
-string wordsList[] = {"hello", "panorama", "maximum", "shivam", "favorite"};//list of words the player guesses
+string wordsList[] = {"hello", "panorama", "maximum", "shivam", "favorite", "programming"};//list of words the player guesses
 char guessed[26];//array that stores all the characters that the player guessed
 int stage = 0;//counts how many times the player enters a wrong character
 int inList = 0;//where the player is in wordsList
 int inG= 0;//where the player is in guessed
 string hidden = wordsList[inList];//the word that the player has to guess
 int numblanks; //numbers of unknown letters left
+
 //draws the hangman depending on variable stage
 void drawMan(){
   if (stage==0){
@@ -132,8 +132,11 @@ char queryLetter(){
   while(true){
   cout << "Enter a letter or multiple letters for multiple guesses: ";
   cin >>let;
-  //for(int i = 0; i < 26;i++)
-    if(isalpha(let))
+  bool repeated = false;
+    for(int i = 0; i < 26;i++)
+      if(guessed[i]==let)
+	repeated = true;
+    if(isalpha(let) && !cin.fail() && repeated == false)
       break;   
      cout<< "invalid input: not a char or letter is already guessed"<< '\n';
   }
@@ -147,8 +150,27 @@ char queryLetter(){
 int main(){
   cout << "Welcome to hangman" << endl;
   drawMan();
+  cout <<"Would you like to use your own word? ";
+  string ownWord;
+  cin >> ownWord;
+  transform(ownWord.begin(), ownWord.end(), ownWord.begin(), ::tolower);
+  
+  if(ownWord.find("y")!= -1 )
+    while(true){
+      inList--;
+    cout <<"Enter your word "<< '\n';
+    cin>> hidden;
+    cin.clear();
+    cin.ignore(10000, '\n');
+    if (string::npos != hidden.find_first_of("0123456789")){
+      cout << "invalid input"<< '\n';
+    }
+    else { 
+	transform(hidden.begin(), hidden.end(), hidden.begin(), ::tolower);
+      break;
+     }
+    }
   indexChar('?');
-
   fill(guessed, guessed+26, '!');
   
   while(stage != 6){
@@ -165,13 +187,16 @@ int main(){
       cout << "You got the word correct!"<< '\n';
       stage =6;
     }
+    else if(stage == 6 && numblanks > 0)
+      cout << "Sorry, you lost, the word was " << hidden<< '\n';
     
     if(stage == 6){//after the game ends, player has the option to restart with a different word or stop playing
       while(true){
-	cout << "would you like to play again, enter yes or no: "<< '\n';
+	cout << "would you like to play again for a given word, enter yes or no: "<< '\n';
 	string again;
       cin >> again;
-      if (again == "yes"){
+      
+       if (again == "yes" && inList != 5){
 	inList++;
 	hidden=wordsList[inList];
 	inG = 0;
@@ -182,8 +207,12 @@ int main(){
 	fill(guessed, guessed+26, '!');
 	break;
         }
+       else if (again == "yes" && inList == 5){
+	cout <<"Sorry, no more words. That's all folks!" << '\n';
+	break;
+          }
       else if (again == "no"){
-	cout << "Thanks for playing!";
+	cout << "Thanks for playing!"<<'\n';
 	break;
       }
       else cout << "incorrect input" << '\n';
@@ -192,3 +221,4 @@ int main(){
   
   }
 }
+
