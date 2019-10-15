@@ -10,7 +10,7 @@ int inG= 0;//where the player is in guessed
 string hidden = wordsList[inList];//the word that the player has to guess
 int numblanks; //numbers of unknown letters left
 
-//draws the hangman depending on variable stage
+//draws the hangman depending on global variable stage
 void drawMan(){
   if (stage==0){
     cout << "   ___ " <<'\n';
