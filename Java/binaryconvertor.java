@@ -1,59 +1,69 @@
 //To do: take in binary number as String
+
 import java.util.Scanner;
 import java.math.BigInteger;
 import java.lang.Math;
 class binary{
     //Uses recursion to check if the input was a binary number
-    static boolean isBinary(long input){
-	if(input%10 ==1 && input%10 == 0)
-	    isBinary(input/10);
-	else if(input%10 !=1 && input%10 != 0)
+    static boolean isBinary(String input){
+	char lastnum = input.charAt(input.length()-1);
+	if(lastnum =='1' && lastnum == '0')
+	    isBinary(input.substring(0,input.length()-1));
+	else if(lastnum !='1' && lastnum !='0')
 	    return false;
-	else if (input/10 == 1)
+	else if (input.substring(0, input.length()-1).equals("1")|| input.substring(0, input.length()-1).equals('0'))
 	    return true;
 	return true;
     }
+
+    
     //Uses the BigInteger class to account for large decimal numbers
-    static BigInteger conBinary(long input){
-	long temp = input;
+    static BigInteger conBinary(BigInteger input){
+	BigInteger temp = input;
 	int place = 0;
 	BigInteger sum = new BigInteger("0");
 	BigInteger added= new BigInteger("2");
-	while(temp != 0){
-	    if(temp % 10 == 1){
+	while(!temp.toString().equals(0)){
+	    if(temp.divide(BigInteger.valueOf(10)).compareTo(new BigInteger("1"))== 0){
 		sum = sum.add(added.pow(place));
 	    }
 	place++;
-        temp/=10;
+        temp= temp.divide(BigInteger.valueOf(10));
 	}
 	return sum;
 	}
+    static boolean isNumeric(String binary){
+	try {
+	    Double.parseDouble(binary);
+	    return true;
+	}
+	catch(NumberFormatException e){
+	    return false;
+	}
+    }
+    
     public static void main(String[] args){
-	long binary;
+	String binary;
 	Scanner scanner = new Scanner(System.in);
 	while(true){
 	System.out.println("Enter a binary number: ");
 	while(true){
-	    if(!scanner.hasNextLong()){
-	    System.out.println("Not a binary number! Please enter a binary number: ");
-	    scanner.next();
-	    }
-	    else {
-		binary = scanner.nextLong();
-		if(isBinary(binary))
+		binary = scanner.nextLine();
+		if(isNumeric(binary) && isBinary(binary))
 		    break;
 		System.out.println("Not a binary number! Enter a binary number: ");
 	    }
-	}
-	System.out.println(binary + " in decimal is " + conBinary(binary)); 
+	BigInteger binarycon = new BigInteger(binary);
+	System.out.println(binary + " in decimal is " + conBinary(binarycon)); 
 	System.out.println("Would you like to convert another number? ");
 	String again = scanner.next();
 	if(again.indexOf("y") == -1)
 	    break;
 	}
     }
-
-    
 }
+
+
+
 
 
