@@ -15,7 +15,57 @@ class binary{
 	if(input.charAt(0)=='1' || input.charAt(0) == '0')
 	    return true;
 	return false;
-    }
+	}
+	
+	public static String conHex(BigInteger dec){
+		String hexreverse = ""; 
+		String hex = "";
+		char append = '?';
+		BigInteger tento4 = new BigInteger("10000");
+		while(dec.toString().length() >= 1){
+		String hexChar = dec.mod(tento4).toString();
+		switch (hexChar) {
+			case  "0000":
+				append = '0';
+			case "0001":
+				append = '1';
+			case "0010":
+				append = '2';
+			case "0011":
+				append = '3';
+			case "0100":
+				append = '4';
+			case "0101":
+				append = '5';
+			case "0110":
+				append = '6';
+			case "0111":
+				append = '7';
+			case "1000":
+				append = '8';
+			case "1001":
+				append = '9';
+			case "1010":
+				append = 'A';
+			case "1011":
+				append = 'B';
+			case "1100":
+				append = 'C';
+			case "1101":
+				append = 'D';
+			case "1110":
+				append = 'E';
+			case "1111":
+				append = 'F';
+		}
+		dec = dec.divide(tento4);
+		hexreverse+=append;
+	}
+		 for (int i = hexreverse.length() - 1 ; i >= 0 ; i--)
+         hex = hex + hexreverse.charAt(i);
+		return hex;
+		
+	}
 
     
     //Uses the BigInteger class to account for large decimal numbers
@@ -50,7 +100,7 @@ class binary{
     //First checks if its numeric, checks if its binary, and then converts the String into a BigInteger
     public static void main(String[] args){
 	String binary;
-	Scanner scanner = new Scanner(System.in);
+		var scanner = new Scanner(System.in);
 	while(true){
 	System.out.println("Enter a binary number: ");
 	while(true){
@@ -60,7 +110,7 @@ class binary{
 		System.out.println("Not a binary number! Enter a binary number: ");
 	    }
 	BigInteger binarycon = new BigInteger(binary);
-	System.out.println(binary + " in decimal is " + conBinary(binarycon)); 
+	System.out.println(binarycon + " in decimal is " + conBinary(binarycon) + " and " + "conHex(binarycon)" + " in hexadecimal."); 
 	System.out.println("Would you like to convert another number? ");
 	String again = scanner.nextLine();
 	if(again.indexOf("y") == -1)
