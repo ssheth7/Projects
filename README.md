@@ -1,6 +1,6 @@
 ## Personal Projects in various languages
-### Completed Projects: hangman.cc binaryconvertor.java
+### Completed Projects: hangman.cc converter.java
 ### hangman-User can play hangman with their own word or a list of predetermined words
-### binaryconvertor-User can input a binary or decimal number of any length and get the number in decimal/hex or binary/hex
+### converter-User can input a binary, decimal, or hex number and get the number in binary, decimal, or hex
 ### WIP 
 ### Stopwatch - Interactive stopwatch
