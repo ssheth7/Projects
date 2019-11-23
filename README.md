@@ -1,5 +1,7 @@
 # Projects
 Personal Projects in various languages
 ## Java
-    
-##C++
+    Completed: Base convertor
+    WIP: Password Generator
+## C++
+    Completed: Hangman
