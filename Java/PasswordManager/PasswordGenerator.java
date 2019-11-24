@@ -83,27 +83,29 @@ public class PasswordGenerator {
 
     public static boolean Login() { //If the user already has a login, this method checks the validity of the credentials
         Scanner scanner = new Scanner(System.in);
-        while (true) {
+        boolean prevUser = true;
+        while (prevUser) {
             System.out.println("What is your username?");
             String username = scanner.nextLine();
             if (username.equals("create"))
-                return false;
+                return !prevUser;
             User user = new User(username);
-            if (userlist.indexOf(user) != -1) {
-                currentuser = user;
-                break;
+            for(int i = 0; i < userlist.size();i++)
+            if (userlist.get(i).toString().equals(user.toString())) {
+               currentuser = userlist.get(i);
+               break;
             }
-            System.out.println(
-                    "That username doesn't exist. Try a different username or type 'create' to create a new account");
+            System.out.println( "That username doesn't exist. Try a different username or type 'create' to create a new account");
         }
 
-        while (true) {
+        while (prevUser) {
             System.out.println("What is your password?");
             String pass = scanner.nextLine();
             if (currentuser.checkCredentials(pass))
                 return true;
             System.out.println("Wrong password");
         }
+        return prevUser;
     }
 
     public static String stripString(String search){ //will condense a url from www.github.com to github
@@ -151,19 +153,21 @@ public class PasswordGenerator {
         if(menuInput == 1){
             System.out.println("What website would you like to create a password for?");
             String domain = scanner.nextLine();
-            System.out.println("What is your username for this website?");
-            String domainuser = scanner.nextLine();         
-            Website web = new Website(domain, domainuser, currentuser.createwebsitePassword(domain, domainuser));
-            currentuser.addWebsite(web);
-            System.out.println("Your username is :" + web.getdomainuser());
-            System.out.println("Your password is :" + web.getdomainpass());
+            if(currentuser.checkExisting(domain) == null)
+                {System.out.println("What is your username for this website?");
+                String domainuser = scanner.nextLine();         
+                Website web = new Website(domain, domainuser, currentuser.createwebsitePassword(domain, domainuser));
+                currentuser.addWebsite(web);
+                System.out.println("Your username"+ web + "is :" + web.getdomainuser());
+                System.out.println("Your password"+ web + "is :" + web.getdomainpass());}
+            else {System.out.println("Your credentials for this website already exists");
+                System.out.println("Your username for " + currentuser.checkExisting(domain) +" is :" + currentuser.checkExisting(domain).getdomainuser());
+                System.out.println("Your password for " + currentuser.checkExisting(domain) +" is :" + currentuser.checkExisting(domain).getdomainpass());  }
         }
         if(menuInput == 2){
             System.out.println("Type the website of the credentials you wish to recieve");
             String getwebsite = scanner.nextLine();
-            getwebsite = stripString(getwebsite);
             currentuser.searchWebsites(getwebsite);
-              
         }
     }
 }

@@ -2,17 +2,17 @@ import java.net.MalformedURLException;
 import java.util.*;
 
 public class User { //Each user has a list of websites; each website has a username and a password
-    private static ArrayList<Website> credentialsList = new ArrayList<Website>();
-    private static String user;
-    private static String pass;
+    private ArrayList<Website> credentialsList = new ArrayList<Website>();
+    private String user;
+    private String pass;
 
     //Get and Set passwords for the variables
-    public User(String username) {
-        user = username;
+    public User(String user) {
+        this.user = user;
     }
 
-    public void setPassword(String password) {
-        pass = password;
+    public void setPassword(String pass) {
+        this.pass = pass;
     }
 
     public String toString() {
@@ -23,6 +23,14 @@ public class User { //Each user has a list of websites; each website has a usern
         credentialsList.add(newWeb);
     }
 
+    public Website checkExisting(String search) throws MalformedURLException {// checks user's list of websites
+        Website searchW = new Website(search);
+        for(int i = 0; i < credentialsList.size();i++)
+            if(credentialsList.get(i).toString().equals(searchW.toString()))
+            return credentialsList.get(i);
+        return null;
+        }
+
     public boolean checkCredentials(String password) {
         if (password == pass)
             return true;
@@ -30,22 +38,14 @@ public class User { //Each user has a list of websites; each website has a usern
     }
 
     public String createwebsitePassword(String domain, String domainuser) throws MalformedURLException {
-        String webpass = encryptPass(user, domain);
+        String webpass = encryptPass(domainuser, domain);
         return webpass;
     }
 
-    public void searchWebsites(String search) {//Prints credentials if the website the user entered correctly matches the a previously entered website;  If the website isn't found, the most similar website is suggested
-        boolean found = false;
-        for (int i = 0; i < credentialsList.size(); i++) {
-            if (credentialsList.get(i).toString().equals(search)) {
-                System.out.println("Your username for " + search + " is " + credentialsList.get(i).getdomainuser());
-                System.out.println("Your password for " + search + " is " + credentialsList.get(i).getdomainpass());
-                found = true;
-            }
-        }
-        if(!found)
-        {
-            System.out.println("Couldn't find the website, were you searching for");
+    public void searchWebsites(String search) throws MalformedURLException {// Prints credentials if the website the user entered correctly matches the a previously entered website; If the website isn't found, the most similar website is suggested
+       Scanner scanner = new Scanner(System.in);
+      Website searchW = new Website(search);
+       search = searchW.toString();
         int numSimLet;
         int indexMostsim = 0;
         int mostSim = 0;
@@ -61,11 +61,20 @@ public class User { //Each user has a list of websites; each website has a usern
                         indexMostsim = i;
                         mostSim = numSimLet;
                 }
-            System.out.print(credentialsList.get(indexMostsim).toString() + "? " +'\n');
+                if(search.length() !=credentialsList.get(indexMostsim).toString().length())
+               { 
+                System.out.println("Couldn't find the website, were you searching for");
+                System.out.print(credentialsList.get(indexMostsim).toString() + "? " +'\n');
+                String suggest = scanner.nextLine();
+                if(suggest.indexOf('y')!= -1)
+                System.out.println("Would you like to create a website password or would you like to search again");
+            }
+                else {System.out.println("Your username for " + search + " is " + credentialsList.get(indexMostsim).getdomainuser());
+                 System.out.println("Your password for " + search + " is " + credentialsList.get(indexMostsim).getdomainpass());}
         }
-    }
+    
 
-    private String encryptPass(String user, String domain) {//Encrypts password based on the user's username and the domain of the website(TODO)
+    private String encryptPass(String user, String domain) {//Encrypts password based on the user's username and the domain of the website(TO DO)
         return user + domain;
     }
 }
