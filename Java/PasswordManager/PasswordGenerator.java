@@ -11,12 +11,15 @@ import java.net.MalformedURLException;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class PasswordGenerator {
-    private static ArrayList<User> userlist = new ArrayList<User>(); //list of users that will be read in from a file (TODO)
-    private static User currentuser; //the user thats currently logged in
+    private static ArrayList<User> userlist = new ArrayList<User>();
+    private static User currentuser;
 
-    public static void Intro() { //Intro that allows the user to Log in or create a new account
+    public static void Intro() throws IOException {
+        FileWriter writer = new FileWriter("output.txt");
         Scanner scanner = new Scanner(System.in);
         System.out.println("Welcome to your password generator, enter your username: ");
         System.out.println("It must be atleast of length 5");
@@ -88,6 +91,12 @@ public class PasswordGenerator {
             }
         }
 
+        for(User user: userlist) {
+            writer.write("Users" + System.lineSeparator());
+            writer.write(user + " " + user.getPassword() + System.lineSeparator());
+        }
+          writer.close();
+
     }
 
     public static boolean Login() { //If the user already has a login, this method checks the validity of the credentials
@@ -114,6 +123,7 @@ public class PasswordGenerator {
                 return true;
             System.out.println("Wrong password");
         }
+        scanner.close();
         return prevUser;
     }
 
@@ -135,13 +145,13 @@ public class PasswordGenerator {
         System.out.println("Enter 2: Get an existing password");
         int menuInput = scanner.nextInt();
         if (menuInput > 0 && menuInput <= 2)
-            return menuInput;
+            {return menuInput;}
         else
-            return 0;
+        return 0;
     }
 
 
-    public static void main(String[] args) throws MalformedURLException { //First the user can either create a new user or login, then they can create website credentials or get an existing password
+    public static void main(String[] args) throws MalformedURLException, IOException { //First the user can either create a new user or login, then they can create website credentials or get an existing password
         Scanner scanner = new Scanner(System.in);
         System.out.println("Are you a returning user?");
         if (scanner.nextLine().indexOf("y") == -1)
@@ -167,8 +177,8 @@ public class PasswordGenerator {
                 String domainuser = scanner.nextLine();         
                 Website web = new Website(domain, domainuser, currentuser.createwebsitePassword(domain, domainuser));
                 currentuser.addWebsite(web);
-                System.out.println("Your username"+ web + "is :" + web.getdomainuser());
-                System.out.println("Your password"+ web + "is :" + web.getdomainpass());}
+                System.out.println("Your username for "+ web + " is : " + web.getdomainuser());
+                System.out.println("Your password for "+ web + " is : " + web.getdomainpass());}
             else {System.out.println("Your credentials for this website already exists");
                 System.out.println("Your username for " + currentuser.checkExisting(domain) +" is :" + currentuser.checkExisting(domain).getdomainuser());
                 System.out.println("Your password for " + currentuser.checkExisting(domain) +" is :" + currentuser.checkExisting(domain).getdomainpass());  }
@@ -179,6 +189,7 @@ public class PasswordGenerator {
             currentuser.searchWebsites(getwebsite);
         }
     }
+    //scanner.close();
 }
 
 }
