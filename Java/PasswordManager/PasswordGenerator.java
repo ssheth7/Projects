@@ -1,3 +1,12 @@
+/*Things to do:
+Create Password Encryption
+Create UI
+Write user credentials into an encrypted file
+Read user credentials into program from encrypted file
+*/
+
+
+
 import java.net.MalformedURLException;
 import java.util.*;
 import java.util.regex.Matcher;

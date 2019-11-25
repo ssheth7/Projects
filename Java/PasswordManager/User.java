@@ -3,7 +3,7 @@ import java.util.*;
 
 public class User { //Each user has a list of websites; each website has a username and a password
     private ArrayList<Website> credentialsList = new ArrayList<Website>();
-    private String user;
+    private String user; 
     private String pass;
 
     //Get and Set passwords for the variables
@@ -38,7 +38,10 @@ public class User { //Each user has a list of websites; each website has a usern
     }
 
     public String createwebsitePassword(String domain, String domainuser) throws MalformedURLException {
-        String webpass = encryptPass(domainuser, domain);
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("What is the max password length allowed by the website?");
+        int maxlength = scanner.nextInt();
+        String webpass = encryptPass(domainuser, domain, maxlength);
         return webpass;
     }
 
@@ -71,10 +74,15 @@ public class User { //Each user has a list of websites; each website has a usern
             }
                 else {System.out.println("Your username for " + search + " is " + credentialsList.get(indexMostsim).getdomainuser());
                  System.out.println("Your password for " + search + " is " + credentialsList.get(indexMostsim).getdomainpass());}
+            scanner.close();
         }
     
-
-    private String encryptPass(String user, String domain) {//Encrypts password based on the user's username and the domain of the website(TO DO)
+    private String encryptPass(String user, String domain, int maxlength) {//Encrypts password based on the user's username and the domain of the website(TO DO)
+        String password  = "";
+        for(int i = 0; i < maxlength;i++)
+        password += (int) (i*Math.random());
+        String comp = user + domain;
         return user + domain;
+
     }
 }
