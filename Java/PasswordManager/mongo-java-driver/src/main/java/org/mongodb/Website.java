@@ -34,7 +34,7 @@ public class Website {
     }
 
     public String stripUrl(String url) throws MalformedURLException {// Strips url String from http://domain.com or // www.domain.com to "domain"
-        if (url.indexOf("http://") > -1) {//http:// exists in String
+        if (url.indexOf("http") > -1) {//http:// exists in String
             URL lURL = new URL(url);
             url = lURL.getHost().toString();
         }

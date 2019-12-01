@@ -1,6 +1,8 @@
-package org.mongodb;
+package org.mongodb;  
 import java.net.MalformedURLException;
 import java.util.*;
+
+import org.bson.Document;
 
 public class User { // Each user has a list of websites; each website has a username and a password
     private ArrayList<Website> credentialsList = new ArrayList<Website>();
@@ -56,6 +58,7 @@ public class User { // Each user has a list of websites; each website has a user
                                                                             // website is suggested
         Scanner scanner = new Scanner(System.in);
         Website searchW = new Website(search);
+        System.out.println(search);
         search = searchW.toString();
         int numSimLet;
         int indexMostsim = 0;
@@ -68,8 +71,8 @@ public class User { // Each user has a list of websites; each website has a user
                         numSimLet++;
                     }
             if (numSimLet >= mostSim)
-                indexMostsim = i;
-            mostSim = numSimLet;
+                {indexMostsim = i;
+            mostSim = numSimLet;}
         }
         if (search.length() != credentialsList.get(indexMostsim).toString().length()) {
             System.out.print("Couldn't find the website, were you searching for ");
