@@ -1,2 +1,6 @@
 *.class
 *.txt
+.settings
+target
+.project
+.vscode
