@@ -2,7 +2,14 @@ package Maven;
 import java.net.MalformedURLException;
 import java.util.*;
 
-//import org.bson.Document;
+
+import com.mongodb.client.model.Filters;
+import com.mongodb.client.FindIterable;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Indexes;
+
+import org.bson.Document;
 
 public class User { // Each user has a list of websites; each website has a username and a password
     private ArrayList<Website> credentialsList = new ArrayList<Website>();
@@ -19,6 +26,14 @@ public class User { // Each user has a list of websites; each website has a user
         this.pass = pass;
     }
 
+    public void setUser(String user){
+        this.user = user;
+    }
+
+    public String getUserName(){
+        return user;
+    }
+
     public String getPassword() {
         return pass;
     }
@@ -26,6 +41,7 @@ public class User { // Each user has a list of websites; each website has a user
     public String toString() {
         return user;
     }
+    
 
     public void addWebsite(Website newWeb) {// when the user wants to create a password for a new website
         credentialsList.add(newWeb);
@@ -51,12 +67,24 @@ public class User { // Each user has a list of websites; each website has a user
         return encryptPass(domainuser, domain, maxlength);
     }
 
-    public void searchWebsites(String search) throws MalformedURLException {// Prints credentials if the website the
+    public void searchWebsites(String search, MongoCollection<Document> collection) throws MalformedURLException {// Prints credentials if the website the
                                                                             // user entered correctly matches the a
                                                                             // previously entered website; If the
                                                                             // website isn't found, the most similar
                                                                             // website is suggested
-        Website searchW = new Website(search);
+        
+        FindIterable<Document> iterable =  collection.find(Filters.eq("domain", search));
+        System.out.println(iterable.first());
+        System.out.println(iterable.first().get("domain"));
+
+        FindIterable<Document> iterDoc = collection.find(); //Listing objects 
+      // Getting the iterator 
+      Iterator<Document> it = iterDoc.iterator(); 
+    
+      while (it.hasNext()) {  
+         System.out.println(it.next());  
+      }  
+        /*Website searchW = new Website(search);
         System.out.println(search);
         search = searchW.toString();
         int numSimLet;
@@ -92,7 +120,7 @@ public class User { // Each user has a list of websites; each website has a user
                         "Your password for " + search + " is " + credentialsList.get(indexMostsim).getdomainpass());
             }
         }
-    }
+    */}
 
     private String encryptPass(String user, String domain, int maxlength) {// Encrypts password based on the user's
                                                                            // username and the domain of the website(TO

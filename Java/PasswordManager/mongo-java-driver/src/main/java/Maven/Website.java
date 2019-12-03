@@ -2,7 +2,6 @@ package Maven;
 import java.net.URL;
 
 import org.bson.Document;
-import com.mongodb.client.MongoDatabase;;
 
 import java.net.MalformedURLException;
 
@@ -10,7 +9,8 @@ public class Website {
     private String domain;
     private String domainuser;
     private String webpassword;
-    private Document toCol = new Document("domain", domain).append("Website username", domainuser).append("Website Password",webpassword);
+    private Document toCol;
+
     public Website(String url) throws MalformedURLException {
         domain = stripUrl(url);
     }
@@ -19,12 +19,14 @@ public class Website {
         domain = stripUrl(url);
         this.domainuser = domainuser;
         this.webpassword = webpassword;
-    
+        toCol = new Document("domain", domain).append("Website username", domainuser).append("Website Password",webpassword);
     }
+
 
     public String toString() {
         return domain;
     }
+    public void setdomain(String domain){this.domain = domain;}
 
     public void setPassword(String webpassword) {
         this.webpassword = webpassword;

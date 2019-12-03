@@ -1,6 +1,6 @@
 /*Things to do:
+Convert Websites to Documents, convery documents to websites
 Remove dependencies on local User ArrayList 
-Write and read user credentials from MongoDB server
 Create Password Encryption
 Create UI
 */
@@ -109,7 +109,7 @@ public class PasswordManager {
        // Scanner scanner = new Scanner(System.in);
         boolean prevUser = true;
         String username = "";
-        boolean invaliduser;
+        boolean validuser;
         while (prevUser) {
             System.out.println("What is your username?");
             username = scanner.nextLine();
@@ -118,22 +118,23 @@ public class PasswordManager {
                 MongoCollection<Document> collection = database.getCollection(username);
             try {
                collection.find().first().get("Password");
-               invaliduser = true;
+               validuser = true;
                
                 
 
             } catch (NullPointerException e) {
                 System.out.println("Username not found, type create to create a new account.");
-                invaliduser = false;
+                validuser = false;
             }
-            while (invaliduser) {
+            while (validuser) {
                 System.out.println("What is your password?");
                 String passInput = scanner.nextLine();
                 System.out.println(collection.find().first().get("Password"));
                 if (collection.find().first().get("Password").equals(passInput)) {
                     System.out.println("Logged in as " + username);
+                    User user = new User(username);
+                    currentuser = user;
                     currentuser.setPassword(passInput);
-                    currentuser.setUser(username);
                     return true;
                 } 
                 else if (passInput.indexOf("create") > -1)
@@ -205,13 +206,9 @@ public class PasswordManager {
                                                                                        // password
         MongoClient mongoclient = new MongoClient(new MongoClientURI("mongodb://localhost:27017"));
         MongoDatabase database = mongoclient.getDatabase("PasswordManager");
-        //Scanner scanner = new Scanner(System.in);
-        boolean newuser = false;
-        
-        
+    
+        boolean newuser = false;    
         System.out.println("Are you a returning user?");
-
-
         if (scanner.nextLine().indexOf("y") == -1) {
             Intro(database);// no
             newuser = true;
@@ -220,7 +217,7 @@ public class PasswordManager {
         int menuInput;
         boolean loggedin = true;
         while (loggedin) {
-            MongoCollection<Document> collection;
+            MongoCollection<Document> collection = database.getCollection(currentuser.getUserName());;
             while (true) {
                 menuInput = Menu(newuser);
                 if (menuInput != 0)
@@ -230,12 +227,13 @@ public class PasswordManager {
 
             if (menuInput == 1) {
                 System.out.println("What website would you like to create a password for?");
+                scanner = new Scanner(System.in);
                 String domain = scanner.nextLine();
                 if (currentuser.checkExisting(domain) == null) {
                     System.out.println("What is your username for this website?");
                     String domainuser = scanner.nextLine();
-                    Website web = new Website( domain, domainuser, currentuser.createwebsitePassword(domain, domainuser));
-                    collection = database.getCollection(currentuser.getUserName());
+                    Website web = new Website(domain, domainuser, currentuser.createwebsitePassword(domain, domainuser));
+                    
                     collection.insertOne(web.getDocument());
                     System.out.println("Your username for " + web + " is : " + web.getdomainuser());
                     System.out.println("Your password for " + web + " is : " + web.getdomainpass());
@@ -250,7 +248,7 @@ public class PasswordManager {
             if (menuInput == 2) {
                 System.out.println("Type the website of the credentials you wish to recieve");
                 String getwebsite = scanner.nextLine();
-                currentuser.searchWebsites(getwebsite);
+                currentuser.searchWebsites(getwebsite, collection);
             }
             if (menuInput == 3)
                 loggedin = false;
