@@ -1,6 +1,4 @@
 /*Things to do:
-Convert Websites to Documents, convery documents to websites
-Remove dependencies on local User ArrayList 
 Create Password Encryption
 Create UI
 */
@@ -14,7 +12,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.mongodb.*;
-import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 //import com.mongodb.client.model.Filters;
 //import com.mongodb.client.model.Updates;
@@ -25,7 +22,6 @@ import org.bson.Document;
 //import javax.print.Doc;
 
 public class PasswordManager {
-    // private static ArrayList<User> userlist = new ArrayList<User>();
     private static Scanner scanner = new Scanner(System.in);
     private static User currentuser;
 
