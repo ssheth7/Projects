@@ -19,7 +19,7 @@ public class Website {
         domain = stripUrl(url);
         this.domainuser = domainuser;
         this.webpassword = webpassword;
-        toCol = new Document("domain", domain).append("Website username", domainuser).append("Website Password",webpassword);
+        toCol = new Document("Domain", domain).append("Website Username", domainuser).append("Website Password",webpassword);
     }
 
 

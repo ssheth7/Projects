@@ -25,12 +25,12 @@ import org.bson.Document;
 //import javax.print.Doc;
 
 public class PasswordManager {
-    private static ArrayList<User> userlist = new ArrayList<User>();
+    // private static ArrayList<User> userlist = new ArrayList<User>();
     private static Scanner scanner = new Scanner(System.in);
     private static User currentuser;
 
     public static void Intro(MongoDatabase database) throws IOException {
-        //Scanner scanner = new Scanner(System.in);
+        // Scanner scanner = new Scanner(System.in);
         System.out.println("Welcome to your password manager, enter your username: ");
         System.out.println("It must be atleast of length 5");
 
@@ -39,11 +39,18 @@ public class PasswordManager {
             User user = new User(scanner.nextLine());
             if (user.toString().length() < 5)
                 System.out.println("Username size too short!");
-            if (userlist.contains(user))
-                System.out.println("Username already exists");
+            boolean inDB = false;
 
-            if (user.toString().length() >= 5 && !userlist.contains(user)) {
-                userlist.add(user);
+            MongoCollection<Document> collection = database.getCollection(user.toString());
+            try {
+                collection.find().first().get("Password");
+                inDB =true;
+                System.out.println("This username already exists");
+            } catch (NullPointerException e) {
+                inDB =false;
+            }
+
+            if (!inDB && user.toString().length() >= 5) {
                 currentuser = user;
                 invaliduser = false;
             }
@@ -106,7 +113,7 @@ public class PasswordManager {
 
     public static boolean Login(MongoDatabase database) { // If the user already has a login, this method checks the
                                                           // validity of the credentials
-       // Scanner scanner = new Scanner(System.in);
+        // Scanner scanner = new Scanner(System.in);
         boolean prevUser = true;
         String username = "";
         boolean validuser;
@@ -115,13 +122,10 @@ public class PasswordManager {
             username = scanner.nextLine();
             if (username.equals("create"))
                 return !prevUser;
-                MongoCollection<Document> collection = database.getCollection(username);
+            MongoCollection<Document> collection = database.getCollection(username);
             try {
-               collection.find().first().get("Password");
-               validuser = true;
-               
-                
-
+                collection.find().first().get("Password");
+                validuser = true;
             } catch (NullPointerException e) {
                 System.out.println("Username not found, type create to create a new account.");
                 validuser = false;
@@ -136,21 +140,18 @@ public class PasswordManager {
                     currentuser = user;
                     currentuser.setPassword(passInput);
                     return true;
-                } 
-                else if (passInput.indexOf("create") > -1)
+                } else if (passInput.indexOf("create") > -1)
                     return false;
                 else
                     System.out.println("Wrong password! Type 'create' to create a new account.");
             }
-            
+
         }
         return false;
     }
 
-   
-
     public static int Menu(boolean newUser) { // A menu for the user once they have logged in
-        //Scanner scanner = new Scanner(System.in);
+        // Scanner scanner = new Scanner(System.in);
         System.out.println("Enter 1: Create a new password for a website");
         if (!newUser)
             System.out.println("Enter 2: Get an existing password");
@@ -170,44 +171,27 @@ public class PasswordManager {
         // Retrieving a collection
 
         MongoCollection<Document> collection = database.getCollection(currentuser.toString());
-        System.out.println("Collection sampleCollection selected successfully");
 
         Document passDoc = new Document("Password", currentuser.getPassword());
         collection.insertOne(passDoc);
 
-        // Getting the iterable object
-        FindIterable<Document> iterDoc = collection.find();
-        // int i = 1;
-
-        // Getting the iterator
-        Iterator<Document> it = iterDoc.iterator();
-
-        while (it.hasNext()) {
-            System.out.println(it.next());
-            // i++;
-        }
-
-        System.out.println("Collection created successfully");
-        for (String name : database.listCollectionNames()) {
-            System.out.println(name);
-
-        }
     }
 
-    public Website toWeb(Document fromDB)throws MalformedURLException{
-        Website website = new Website((String)fromDB.get("domain"), (String)fromDB.get("Website username"), (String)fromDB.get("Website password"));
+    public Website toWeb(Document fromDB) throws MalformedURLException {
+        Website website = new Website((String) fromDB.get("domain"), (String) fromDB.get("Website username"),
+                (String) fromDB.get("Website password"));
         return website;
     }
 
-    public static void main(String[] args) throws MalformedURLException, IOException{ // First the user can either
+    public static void main(String[] args) throws MalformedURLException, IOException { // First the user can either
                                                                                        // create a new user or login,
                                                                                        // then they can create website
                                                                                        // credentials or get an existing
                                                                                        // password
         MongoClient mongoclient = new MongoClient(new MongoClientURI("mongodb://localhost:27017"));
         MongoDatabase database = mongoclient.getDatabase("PasswordManager");
-    
-        boolean newuser = false;    
+        boolean newuser = false;
+
         System.out.println("Are you a returning user?");
         if (scanner.nextLine().indexOf("y") == -1) {
             Intro(database);// no
@@ -217,7 +201,9 @@ public class PasswordManager {
         int menuInput;
         boolean loggedin = true;
         while (loggedin) {
-            MongoCollection<Document> collection = database.getCollection(currentuser.getUserName());;
+
+            MongoCollection<Document> collection = database.getCollection(currentuser.getUserName());
+            ;
             while (true) {
                 menuInput = Menu(newuser);
                 if (menuInput != 0)
@@ -229,26 +215,28 @@ public class PasswordManager {
                 System.out.println("What website would you like to create a password for?");
                 scanner = new Scanner(System.in);
                 String domain = scanner.nextLine();
-                if (currentuser.checkExisting(domain) == null) {
+                if (currentuser.checkExisting(domain, collection) == null) {
                     System.out.println("What is your username for this website?");
                     String domainuser = scanner.nextLine();
-                    Website web = new Website(domain, domainuser, currentuser.createwebsitePassword(domain, domainuser));
-                    
+                    Website web = new Website(domain, domainuser,
+                            currentuser.createwebsitePassword(domain, domainuser));
+
                     collection.insertOne(web.getDocument());
                     System.out.println("Your username for " + web + " is : " + web.getdomainuser());
                     System.out.println("Your password for " + web + " is : " + web.getdomainpass());
                 } else {
+                    Document found = new Document();
+                    found = currentuser.checkExisting(domain, collection);
                     System.out.println("Your credentials for this website already exists");
-                    System.out.println("Your username for " + currentuser.checkExisting(domain) + " is :"
-                            + currentuser.checkExisting(domain).getdomainuser());
-                    System.out.println("Your password for " + currentuser.checkExisting(domain) + " is :"
-                            + currentuser.checkExisting(domain).getdomainpass());
+                    System.out.println(
+                            "Your username for " + found.get("Domain") + " is :" + found.get("Website Username"));
+                    System.out.println(
+                            "Your password for " + found.get("Domain") + " is :" + found.get("Website Password"));
                 }
             }
             if (menuInput == 2) {
-                System.out.println("Type the website of the credentials you wish to recieve");
-                String getwebsite = scanner.nextLine();
-                currentuser.searchWebsites(getwebsite, collection);
+                // scanner.nextLine();
+                currentuser.searchWebsites(collection);
             }
             if (menuInput == 3)
                 loggedin = false;
