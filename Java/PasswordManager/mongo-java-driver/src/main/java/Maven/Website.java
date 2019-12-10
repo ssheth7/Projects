@@ -6,26 +6,28 @@ import org.bson.Document;
 import java.net.MalformedURLException;
 
 public class Website {
-    private String domain;
-    private String domainuser;
-    private String webpassword;
-    private Document toCol;
+    private String domain;//google
+    private String domainuser;//google username
+    private String webpassword;//google pass
+    private Document toCol;//Document that is uploaded to MongoDb
 
     public Website(String url) throws MalformedURLException {
         domain = stripUrl(url);
-    }
+    }//splices url to domain name
 
-    public Website(String url, String domainuser, String webpassword) throws MalformedURLException  {//Each website has a domain name, username, and a website password
+    public Website(String url, String domainuser, String webpassword) throws MalformedURLException  {//Each website has a domain name, 
+                                                            //username, and a website password
         domain = stripUrl(url);
         this.domainuser = domainuser;
         this.webpassword = webpassword;
         toCol = new Document("Domain", domain).append("Website Username", domainuser).append("Website Password",webpassword);
-    }
+    }//creates a website that is then converted to a document to be uploaded to the mongodb server
 
 
     public String toString() {
         return domain;
     }
+    //get and set methods for private variables
     public void setdomain(String domain){this.domain = domain;}
 
     public void setPassword(String webpassword) {
