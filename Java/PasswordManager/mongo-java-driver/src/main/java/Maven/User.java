@@ -101,7 +101,7 @@ public class User { // Each user has a list of websites; each website has a user
         unique = RandomStringUtils.random(plength, (user+domain).toCharArray());//random chars taken from 
                                                                                 //account username and domain          
         
-        encrypted += specialChars.substring(0, 4) + numbers.substring(4, 7) + unique.substring(7,10);//Builds the users password
+        encrypted += specialChars.substring(0, 4) + numbers.substring(4, 7) + unique.substring(7,plength);//Builds the users password
         
          invalidpass = false;//assumes the password is valid until if statements set it to false
         
@@ -112,7 +112,7 @@ public class User { // Each user has a list of websites; each website has a user
             invalidpass = true;
         }
 
-        p = Pattern.compile("[^a-z]");
+        p = Pattern.compile("[^0-9]");
         m = p.matcher(encrypted);
 
         if (!m.find()) {//sets invalid car to true if password lacks a number

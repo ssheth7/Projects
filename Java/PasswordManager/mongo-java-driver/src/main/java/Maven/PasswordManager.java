@@ -16,6 +16,9 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
 
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+@SpringBootApplication
 public class PasswordManager {
     private static Scanner scanner = new Scanner(System.in); 
     private static User currentuser; //Global object that allows all methods to connect to the user's collection
@@ -204,10 +207,15 @@ public class PasswordManager {
                                                                                        // then they can create website
                                                                                        // credentials or get an existing
                                                                                        // password
-        MongoClient mongoclient = new MongoClient(new MongoClientURI("mongodb://localhost:27017"));
-        MongoDatabase database = mongoclient.getDatabase("PasswordManager");
+        SpringApplication.run(PasswordManager.class, args);
         boolean newuser = false;
         
+        MongoClientURI uri = new MongoClientURI(
+        "mongodb://username:<Password>@cluster0-shard-00-00-w47ob.mongodb.net:27017,cluster0-shard-00-01-w47ob.mongodb.net:27017,cluster0-shard-00-02-w47ob.mongodb.net:27017/test?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin&retryWrites=true&w=majority");
+
+        MongoClient mongoClient = new MongoClient(uri);
+        MongoDatabase database = mongoClient.getDatabase("test");
+
         
 
         System.out.println("Are you a returning user?");
@@ -260,6 +268,7 @@ public class PasswordManager {
                 loggedin = false;
         }
         scanner.close();
-        mongoclient.close();
+        mongoClient.close();
+        
     }
 }
