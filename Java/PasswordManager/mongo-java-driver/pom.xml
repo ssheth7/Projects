@@ -72,7 +72,29 @@
 					<artifactId>junit-vintage-engine</artifactId>
 				</exclusion>
 			</exclusions>
-		</dependency>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/com.pusher/pusher-java-client -->
+    <dependency>
+      <groupId>com.pusher</groupId>
+      <artifactId>pusher-java-client</artifactId>
+      <version>2.0.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.bouncycastle</groupId>
+      <artifactId>bcprov-jdk15on</artifactId>
+      <version>1.60</version>
+  </dependency>
+  
+    <dependency>
+      <groupId>org.eurekaclinical</groupId>
+      <artifactId>protempa-framework</artifactId>
+      <version>5.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.elasticsearch</groupId>
+      <artifactId>elasticsearch</artifactId>
+      <version>7.3.0</version>
+    </dependency>
   </dependencies>
 
   <build>

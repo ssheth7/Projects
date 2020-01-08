@@ -14,11 +14,11 @@ import java.util.regex.Pattern;
 import com.mongodb.*;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+
+import org.apache.commons.codec.digest.DigestUtils;
 import org.bson.Document;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-@SpringBootApplication
+
 public class PasswordManager {
     private static Scanner scanner = new Scanner(System.in); 
     private static User currentuser; //Global object that allows all methods to connect to the user's collection
@@ -138,6 +138,7 @@ public class PasswordManager {
             while (validuser) {//user is in a while loop until they get the correct credentials or decide to create a new account
                 System.out.println("What is your password?");
                 String passInput = scanner.nextLine();
+                passInput = DigestUtils.sha256Hex(passInput);
                 System.out.println(collection.find().first().get("Password"));
                 if (collection.find().first().get("Password").equals(passInput)) {
                     System.out.println("Logged in as " + username);
@@ -157,6 +158,7 @@ public class PasswordManager {
                 MongoCollection<Document> collection = database.getCollection(fromCreate);//username
                 System.out.println("What is your password?");
                 String passInput = scanner.nextLine();
+                passInput = DigestUtils.sha256Hex(passInput);
                 System.out.println(collection.find().first().get("Password"));
                 if (collection.find().first().get("Password").equals(passInput)) {
                     System.out.println("Logged in as " + fromCreate);
@@ -194,30 +196,34 @@ public class PasswordManager {
         // Retrieving a collection
 
         MongoCollection<Document> collection = database.getCollection(currentuser.toString());
-
-        Document passDoc = new Document("Password", currentuser.getPassword());
+        String sha256hex = DigestUtils.sha256Hex(currentuser.getPassword());
+        Document passDoc = new Document("Password", sha256hex);
         collection.insertOne(passDoc);
 
     }
 
-   
+    
 
     public static void main(String[] args) throws MalformedURLException, IOException { // First the user can either
                                                                                        // create a new user or login,
                                                                                        // then they can create website
                                                                                        // credentials or get an existing
                                                                                        // password
-        SpringApplication.run(PasswordManager.class, args);
+    //Pusher pusher = new Pusher("927530", "6bc72504626e04f07069", "aae7cdf39adf66077030");
+    //pusher.setCluster("us2");
+    //pusher.setEncrypted(true);
+    //pusher.trigger("my-channel", "my-event", Collections.singletonMap("message", "hello world"));
+
         boolean newuser = false;
         
         MongoClientURI uri = new MongoClientURI(
-        "mongodb://username:<Password>@cluster0-shard-00-00-w47ob.mongodb.net:27017,cluster0-shard-00-01-w47ob.mongodb.net:27017,cluster0-shard-00-02-w47ob.mongodb.net:27017/test?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin&retryWrites=true&w=majority");
+        "mongodb://ssheth7:BWTuU956cH2d5sF!@cluster0-shard-00-00-w47ob.mongodb.net:27017,cluster0-shard-00-01-w47ob.mongodb.net:27017,cluster0-shard-00-02-w47ob.mongodb.net:27017/test?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin&retryWrites=true&w=majority");
 
         MongoClient mongoClient = new MongoClient(uri);
         MongoDatabase database = mongoClient.getDatabase("test");
 
         
-
+        
         System.out.println("Are you a returning user?");
         if (scanner.nextLine().indexOf("y") == -1) {
             newuser = Intro(database);// no, the user is a new user
