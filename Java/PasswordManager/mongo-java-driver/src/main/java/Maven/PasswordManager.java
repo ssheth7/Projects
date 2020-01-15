@@ -26,15 +26,17 @@ public class PasswordManager {
     public static boolean Intro(MongoDatabase database) throws IOException {//Creates a new collection for the user
         // Scanner scanner = new Scanner(System.in);
         System.out.println("Welcome to your password manager, enter your username: ");
-        System.out.println("It must be atleast of length 5");
+        System.out.println("It must be atleast 5 characters");
 
+        String username = "";
+        String plainusername = "";
         boolean invaliduser = true;
         while (invaliduser) {//while loop that allows the user to create their username based on the given requirements
-            String username = scanner.nextLine();
-            if (username.length() < 5)
+             plainusername = scanner.nextLine();
+            if (plainusername.length() < 5)
                 System.out.println("Username size too short!");
             boolean inDB = false;
-
+            username = DigestUtils.sha256Hex(plainusername);
             MongoCollection<Document> collection = database.getCollection(username);
             try {//if a collection belonging to the same user if found, then the user will be asked to choose a different username
                 collection.find().first().get("Password");
@@ -43,7 +45,7 @@ public class PasswordManager {
                 System.out.println("Is this your account?");
                 String signIn = scanner.nextLine();
                     if(signIn.indexOf('y') != -1){//user would like to sign in
-                        if( Login(database, username)) //if the user successfully logs in, the user is able access their website 
+                        if( Login(database, plainusername)) //if the user successfully logs in, the user is able access their website 
                             return false;           //credentials
                     }
             } catch (NullPointerException e) {
@@ -108,6 +110,7 @@ public class PasswordManager {
 
             if (!flags) {//if there are no flags, the current user's credentials are set
                 invalidpass = false;
+                pass = DigestUtils.sha256Hex(pass);
                 currentuser.setPassword(pass);
             }
         }
@@ -124,9 +127,11 @@ public class PasswordManager {
         if(fromCreate == null)
         while (prevUser) {//User enters his username
             System.out.println("What is your username?");
-            username = scanner.nextLine();
-            if (username.equals("create"))//if the user realizes that they do not have an account,  they can create a new account
+            String plainusername = scanner.nextLine();
+            if (plainusername.equals("create"))//if the user realizes that they do not have an account,  they can create a new account
                 return !prevUser;
+            username = DigestUtils.sha256Hex(plainusername);
+            System.out.println(username);
             MongoCollection<Document> collection = database.getCollection(username);
             try {
                 collection.find().first().get("Password");
@@ -138,13 +143,13 @@ public class PasswordManager {
             while (validuser) {//user is in a while loop until they get the correct credentials or decide to create a new account
                 System.out.println("What is your password?");
                 String passInput = scanner.nextLine();
-                passInput = DigestUtils.sha256Hex(passInput);
+                String hashPassInput = DigestUtils.sha256Hex(passInput);
                 System.out.println(collection.find().first().get("Password"));
-                if (collection.find().first().get("Password").equals(passInput)) {
-                    System.out.println("Logged in as " + username);
+                if (collection.find().first().get("Password").equals(hashPassInput)) {
+                    System.out.println("Logged in as " + plainusername);
                     User user = new User(username);
                     currentuser = user;
-                    currentuser.setPassword(passInput);
+                    currentuser.setPassword(hashPassInput);
                     return true;
                 } else if (passInput.indexOf("create") > -1)
                     return false;
@@ -155,16 +160,16 @@ public class PasswordManager {
         }
         else {
             while (true) {//If the user initially thinks they don't have an account but find that they do after entering their
-                MongoCollection<Document> collection = database.getCollection(fromCreate);//username
+                String hashedFromCreate = DigestUtils.sha256Hex(fromCreate);
+                MongoCollection<Document> collection = database.getCollection(hashedFromCreate);//username
                 System.out.println("What is your password?");
                 String passInput = scanner.nextLine();
-                passInput = DigestUtils.sha256Hex(passInput);
-                System.out.println(collection.find().first().get("Password"));
-                if (collection.find().first().get("Password").equals(passInput)) {
+                String hashPassInput = DigestUtils.sha256Hex(passInput);
+                if (collection.find().first().get("Password").equals(hashPassInput)) {
                     System.out.println("Logged in as " + fromCreate);
-                    User user = new User(fromCreate);
+                    User user = new User(hashedFromCreate);
                     currentuser = user;
-                    currentuser.setPassword(passInput);
+                    currentuser.setPassword(hashPassInput);
                     return true;
                 } else if (passInput.indexOf("create") > -1)
                     return false;
@@ -196,8 +201,8 @@ public class PasswordManager {
         // Retrieving a collection
 
         MongoCollection<Document> collection = database.getCollection(currentuser.toString());
-        String sha256hex = DigestUtils.sha256Hex(currentuser.getPassword());
-        Document passDoc = new Document("Password", sha256hex);
+        //String sha256hex = DigestUtils.sha256Hex(currentuser.getPassword());
+        Document passDoc = new Document("Password",currentuser.getPassword());
         collection.insertOne(passDoc);
 
     }
@@ -216,11 +221,13 @@ public class PasswordManager {
 
         boolean newuser = false;
         
-        MongoClientURI uri = new MongoClientURI(
-        "mongodb://ssheth7:BWTuU956cH2d5sF!@cluster0-shard-00-00-w47ob.mongodb.net:27017,cluster0-shard-00-01-w47ob.mongodb.net:27017,cluster0-shard-00-02-w47ob.mongodb.net:27017/test?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin&retryWrites=true&w=majority");
+        
+MongoClientURI uri = new MongoClientURI(
+    "mongodb://ssheth7:BWTuU956cH2d5sF!@cluster0-shard-00-00-w47ob.mongodb.net:27017,cluster0-shard-00-01-w47ob.mongodb.net:27017,cluster0-shard-00-02-w47ob.mongodb.net:27017/test?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin&retryWrites=true&w=majority");
 
-        MongoClient mongoClient = new MongoClient(uri);
-        MongoDatabase database = mongoClient.getDatabase("test");
+MongoClient mongoClient = new MongoClient(uri);
+MongoDatabase database = mongoClient.getDatabase("test");
+
 
         
         
