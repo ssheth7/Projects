@@ -223,7 +223,7 @@ public class PasswordManager {
         
         
 MongoClientURI uri = new MongoClientURI(
-    "mongodb://ssheth7:BWTuU956cH2d5sF!@cluster0-shard-00-00-w47ob.mongodb.net:27017,cluster0-shard-00-01-w47ob.mongodb.net:27017,cluster0-shard-00-02-w47ob.mongodb.net:27017/test?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin&retryWrites=true&w=majority");
+    "mongodb://username:<password>@cluster0-shard-00-00-w47ob.mongodb.net:27017,cluster0-shard-00-01-w47ob.mongodb.net:27017,cluster0-shard-00-02-w47ob.mongodb.net:27017/test?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin&retryWrites=true&w=majority");
 
 MongoClient mongoClient = new MongoClient(uri);
 MongoDatabase database = mongoClient.getDatabase("test");
