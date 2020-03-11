@@ -1,1 +1,1 @@
-## A fully functional password manager that uses mongoDB to store application credentials and website credentials
+### A fully functional password manager that uses mongoDB to store application credentials and website credentials
