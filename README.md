@@ -6,4 +6,4 @@ Personal Projects in various languages
 ## C++
     Completed: Hangman - allows the user to play hangman with a predetermined list of words
 ## Python
-    A faster more efficient Password Manager written in python
+    A faster and more efficient Password Manager written in python
