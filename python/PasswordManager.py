@@ -139,12 +139,11 @@ def getDomain(url):
 
 if __name__ == '__main__':    
     currentuser = User()
-    client = pymongo.MongoClient("mongodb+srv://ssheth7:BWTuU956cH2d5sF!@cluster0-w47ob.azure.mongodb.net/test?retryWrites=true&w=majority")
+    client = pymongo.MongoClient("mongodb+srv://username:<password>@cluster0-w47ob.azure.mongodb.net/test?retryWrites=true&w=majority")
     db = client.test
     new = raw_input("Are you a returning user?")
     if("y" not in new):Intro()
     else: Login(None)
-    menuInput = 0
     print("Logged in successfully!")
     while(True):
         print("Here you can query or create a website credential")
