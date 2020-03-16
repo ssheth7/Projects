@@ -1,0 +1,20 @@
+<html>
+      <head>
+         <h1>Welcome {{ name }}!</h1>
+      </head>
+         <body>
+            <form action = "{{url_for('showCredentials', name = name)}}" method = "POST">
+            <p>Domain <input type = "text" name = "Domain" /></p>
+            <p><input type = "submit" value = "Submit" /></p>
+        </form>
+        <form action = "{{url_for('createCredentials',name = name, domain = domain)}}" method = "POST">
+            <p>Credentials for domain '{{domain}}' don't exist, Fill out the following information to create new credentials.</p>
+            <p>Username for '{{domain}}' <input type = "text" name = "Duser"</p>
+            <p>Password length <input type = "number" name = "plength" min='3'</p>
+            <p><input type="submit" name="Create" value="Create!"></p> 
+        </form>
+        <form action = "{{url_for('home')}}">
+         <p><input type = "submit" value = "Logout" /></p>
+     </form>
+      </body>
+</html>
